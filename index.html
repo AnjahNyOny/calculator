@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+</head>
+
+<body>
+    <h1>Calculator</h1>
+    <main>
+        <div class="content">
+            <p class="display">
+            </p>
+            <div class="buttons">
+                <div class="button-container">
+                    <button id="back">⬅</button>
+                    <button id="clear">AC</button>
+                    <button id="by">/</button>
+                    <button id="plus" class="operator">+</button>
+                    <button id="seven" class="numButton">7</button>
+                    <button id="eight" class="numButton">8</button>
+                    <button id="nine" class="numButton">9</button>
+                    <button id="times" class="operator">x</button>
+                    <button id="four" class="numButton">4</button>
+                    <button id="five" class="numButton">5</button>
+                    <button id="six" class="numButton">6</button>
+                    <button id="minus" class="operator">-</button>
+                    <button id="one" class="numButton">1</button>
+                    <button id="two" class="numButton">2</button>
+                    <button id="three" class="numButton">3</button>
+                    <button id="equals" class="operator">=</button>
+                    <button id="zero" class="numButton">0</button>
+                    <button id="virgule" class="numButton">.</button>
+                </div>
+            </div>
+        </div>
+        </div>
+    </main>
+</body>
+
+</html>
+<script>
+    let firstNum = "";
+    let secondNum = "";
+    let operatorDisplay = "";
+    let operator = "";
+    let isSecondNum = false;
+    let operated = false;
+    const display = document.querySelector(".display")
+    const add = (a, b) => a + b;
+    const substract = (a, b) => a - b;
+    const multiply = (a, b) => a * b;
+    const divide = (a, b) => a / b;
+    const operate = (a, operator, b) => {
+        // console.log(a + operator + b);
+
+        switch (operator) {
+            case "add":
+                return add(a, b)
+                break;
+            case "substract":
+                return substract(a, b)
+                break;
+            case "multiply":
+                return multiply(a, b)
+                break;
+            case "divide":
+                let res = (divide(a, b)).toFixed(6);
+                return res;
+                break;
+            default:
+                return "error";
+                break;
+        }
+    }
+    const firstController = new AbortController;
+    const firstSignal = firstController.signal;
+    const secondController = new AbortController;
+    const secondSignal = secondController.signal;
+    const refreshDisplay = () => display.textContent = firstNum + operatorDisplay + secondNum;
+    const numberContainer = document.querySelector(".number-container");
+    const plusButton = document.querySelector("#plus")
+    plusButton.addEventListener("click", () => {
+        toggleNumberButtons(false)
+        if (operated) {
+            calculate();
+            operatorDisplay = "+";
+            operator = "add";
+            refreshDisplay();
+        };
+        operatorDisplay = "+";
+        operator = "add";
+        isSecondNum = true;
+        refreshDisplay();
+        firstController.abort();
+        operated = true;
+    })
+    const minusButton = document.querySelector("#minus")
+    minusButton.addEventListener("click", () => {
+        if (operated) {
+            calculate();
+            operatorDisplay = "-";
+            operator = "substract";
+            refreshDisplay();
+        };
+        operatorDisplay = "-";
+        operator = "substract";
+        isSecondNum = true;
+        refreshDisplay();
+        firstController.abort();
+        toggleNumberButtons(false)
+    })
+    const timesButton = document.querySelector("#times")
+    timesButton.addEventListener("click", () => {
+        toggleNumberButtons(false)
+        if (operated) {
+            calculate();
+            operatorDisplay = "*";
+            operator = "multiply";
+            refreshDisplay();
+        };
+        operatorDisplay = "*";
+        operator = "multiply";
+        isSecondNum = true;
+        refreshDisplay();
+        operated = true;
+    })
+    const byButton = document.querySelector("#by")
+    byButton.addEventListener("click", () => {
+        toggleNumberButtons(false)
+        if (operated) {
+            calculate();
+            operatorDisplay = "/";
+            operator = "divide";
+            refreshDisplay();
+        };
+        operatorDisplay = "/";
+        operator = "divide";
+        isSecondNum = true;
+        refreshDisplay();
+        operated = true;
+    })
+    const equalButton = document.querySelector("#equals")
+    equalButton.addEventListener("click", () => {
+        calculate();
+        toggleNumberButtons(true);
+    })
+    const backButton = document.querySelector("#back")
+    backButton.addEventListener("click", () => {
+        if (isSecondNum) {
+            let sliced = secondNum.slice(0, -1);
+            secondNum = sliced;
+            console.log(secondNum);
+
+            refreshDisplay()
+        } else {
+            let sliced = firstNum.slice(0, -1);
+            firstNum = sliced;
+            console.log(firstNum);
+            refreshDisplay()
+        }
+    })
+    // const removeLastChar = () => {
+
+    // }
+    const calculate = () => {
+        if (!operator && secondNum === "") return;
+        let res = operate(Number(firstNum), operator, Number(secondNum))
+        display.textContent = res;
+        firstNum = res;
+        secondNum = "";
+        operator = "";
+        operatorDisplay = "";
+        isSecondNum = true;
+        operated = false;
+    }
+    const clearButton = document.querySelector("#clear")
+    clearButton.addEventListener("click", () => {
+        toggleNumberButtons(false)
+        display.textContent = "";
+        firstNum = "";
+        secondNum = "";
+        operator = "";
+        operatorDisplay = "";
+        isSecondNum = false;
+        refreshDisplay();
+    })
+
+    
+    // till operator is clicked,
+    const virgule = document.querySelector("#virgule");
+    const one = document.querySelector("#one");
+    const two = document.querySelector("#two");
+    const three = document.querySelector("#three");
+    const four = document.querySelector("#four");
+    const five = document.querySelector("#five");
+    const six = document.querySelector("#six");
+    const seven = document.querySelector("#seven");
+    const eight = document.querySelector("#eight");
+    const nine = document.querySelector("#nine");
+    const zero = document.querySelector("#zero");
+
+    const toggleNumberButtons = (state) => {
+        const toggle = document.querySelectorAll(".button-container .numButton");
+        toggle.forEach(btn => { btn.disabled = state });
+    }
+
+    const getNum = () => {
+        virgule.addEventListener("click", () => {
+            let num = ".";
+            if (isSecondNum) {
+                addSecondNum(num);
+            } else {
+                addFirstNum(num);
+            }
+        })
+        zero.addEventListener("click", () => {
+            if (isSecondNum) {
+                addSecondNum(0);
+            } else {
+                addFirstNum(0);
+            }
+        })
+        one.addEventListener("click", () => {
+            if (isSecondNum) {
+                addSecondNum(1);
+            } else {
+                addFirstNum(1);
+            }
+        })
+        two.addEventListener("click", () => {
+            if (isSecondNum) {
+                addSecondNum(2);
+            } else {
+                addFirstNum(2);
+            }
+        })
+        three.addEventListener("click", () => {
+            if (isSecondNum) {
+                addSecondNum(3);
+            } else {
+                addFirstNum(3);
+            }
+        })
+        four.addEventListener("click", () => {
+            if (isSecondNum) {
+                addSecondNum(4);
+            } else {
+                addFirstNum(4);
+            }
+        })
+        five.addEventListener("click", () => {
+            if (isSecondNum) {
+                addSecondNum(5);
+            } else {
+                addFirstNum(5);
+            }
+        })
+        six.addEventListener("click", () => {
+            if (isSecondNum) {
+                addSecondNum(6);
+            } else {
+                addFirstNum(6);
+            }
+        })
+        seven.addEventListener("click", () => {
+            if (isSecondNum) {
+                addSecondNum(7);
+            } else {
+                addFirstNum(7);
+            }
+        })
+        eight.addEventListener("click", () => {
+            if (isSecondNum) {
+                addSecondNum(8);
+            } else {
+                addFirstNum(8);
+            }
+        })
+        nine.addEventListener("click", () => {
+            if (isSecondNum) {
+                addSecondNum(9);
+            } else {
+                addFirstNum(9);
+            }
+        })
+
+    }
+
+    const addFirstNum = (num) => {
+        firstNum += `${num}`;
+        refreshDisplay();
+    }
+
+    const addSecondNum = (num) => {
+        secondNum += `${num}`;
+        refreshDisplay();
+    }
+
+    getNum();
+
+</script>
+
+<style>
+    body {
+        padding: 0;
+        margin: 0;
+    }
+
+    main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .content {
+        background: #868383c2;
+        width: 400px;
+        height: 600px;
+        padding: 20px;
+        border-radius: 35px;
+    }
+
+    .display {
+        display: flex;
+        justify-content: end;
+        align-items: center;
+        background: #bcbabae4;
+        height: 80px;
+        border-radius: 20px;
+        text-align: end;
+        padding-right: 20px;
+        /* text */
+        font-size: 3rem;
+        margin: 0;
+        margin-bottom: 30px;
+    }
+
+    /* .buttons{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    } */
+
+    .button-container {
+        display: grid;
+        grid-template: 1fr 1fr 1fr 1fr / 1fr 1fr 1fr 1fr;
+        gap: 10px;
+    }
+
+    button {
+        width: 90px;
+        height: 90px;
+        border-radius: 50px;
+        border: none;
+        font-size: 2rem;
+        font-weight: 300;
+    }
+
+    .operator{
+        background: #f1a849;
+        color: #fff;
+    }
+</style>
